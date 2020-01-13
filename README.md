@@ -52,11 +52,12 @@ class DocumentsController < ApplicationController
 
   def index
     return head(:forbidden) unless session.include? :user_id
+    @documents = Document.all
   end
 
   def create
     return head(:forbidden) unless session.include? :user_id
-    @document = Document.create(author_id: user_id)
+    @document = Document.create(author_id: session[:user_id])
   end
 
   def update
@@ -82,10 +83,11 @@ class DocumentsController < ApplicationController
   end
 
   def index
+    @documents = Document.all
   end
 
   def create
-    @document = Document.create(author_id: user_id)
+    @document = Document.create(author_id: session[:user_id])
   end
 
   private
@@ -105,13 +107,13 @@ before_action :require_login
 This is a call to the ActionController class method `before_action`.
 `before_action` registers a filter. A filter is a method which runs before,
 after, or around, a controller's action. In this case, the filter runs before
-all DocumentsController's actions, and kicks requests out with `403 Forbidden`
+all of the DocumentsController's actions, and kicks requests out with `403 Forbidden`
 unless they're logged in.
 
 ## Skipping filters for certain actions
 
 What if we wanted to let anyone see a list of documents, but keep the
-`before_action` filter for other `DocumentsController` methods? We could do
+`before_action` filter for other `DocumentsController` actions? We could do
 this:
 
 ```ruby
